@@ -1,4 +1,3 @@
-#outlined-basic {
-    display: block;
-    padding-top: 100px;
+.input{
+    display: flex;
 }
