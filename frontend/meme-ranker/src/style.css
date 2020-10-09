@@ -1,0 +1,44 @@
+.body{
+font-family: 'Montserrat';
+}
+
+/* Navbar */
+.navbar-brand{
+    font-weight: bold;
+    color: black;
+}
+#navbar-search{
+    border-radius: 15px;  
+    margin: 0;
+}
+
+/* Login and Sing Up page */
+.login-brand {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    color: black;
+}
+.form-group{
+    width: 250px;
+    margin: auto;
+}
+.form-control{
+    margin-bottom: 20px;
+}
+.container-fluid{
+    padding-top: 10%;
+}
+.btn-lg{
+    font-family: 'Montserrat';
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+#avatarFile{
+    position: none;
+}
+.fileHelp{
+    margin-bottom: 20px;
+}
+#signup-btn {
+    margin-top: 10px;
+}
