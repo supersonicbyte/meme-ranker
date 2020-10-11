@@ -42,3 +42,41 @@ font-family: 'Montserrat';
 #signup-btn {
     margin-top: 10px;
 }
+
+/* Post card */
+.post{
+    width: 30rem;
+    margin-top: 3rem;
+    
+}
+.post-title{
+    padding: 0.5rem;
+    height: 3rem;
+}
+.post-footer{
+    padding: 0.5rem;
+    height: 3rem;
+}
+.post-footer p{
+    display: inline;
+    font-family: 'Montserrat';
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+.avatar-image {
+    display: inline;
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  .post-username{
+      display: inline;
+      font-family: 'Montserrat';
+      margin-left: 1rem;
+      font-size: 14px;
+  }
+  .fa-arrow{
+      margin-right: 0.5rem;
+  }

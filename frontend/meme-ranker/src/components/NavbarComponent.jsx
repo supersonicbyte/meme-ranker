@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 
 class Navbar extends Component {
@@ -31,10 +32,10 @@ class Navbar extends Component {
                         <input className="form-control mr-sm-2" id="navbar-search" type="text" placeholder="Search"></input>
                     </form>
                     <li className="nav-item">
-                            <a className="nav-link" href="#">Sign up</a>
+                            <Link to="/signup"><a className="nav-link">Sign up</a></Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Log in</a>
+                            <Link to="/login"><a className="nav-link">Log in</a></Link>
                         </li>
                     </ul>
                     

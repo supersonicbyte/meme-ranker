@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 
-class SingupComponent extends Component {
+class Singup extends Component {
     render() {
         return (
             <div className="container-fluid">
@@ -48,4 +48,4 @@ class SingupComponent extends Component {
         );
     }
 }
-export default SingupComponent;
+export default Singup;
