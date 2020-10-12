@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-class Login extends Component {
-  render() {
+function Login(props){
     return (
       <div className="container-fluid">
         <div className="row">
@@ -33,8 +32,6 @@ class Login extends Component {
         </div>
       </div>
     );
-  }
-
 }
 
 export default Login;

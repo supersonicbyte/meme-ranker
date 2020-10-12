@@ -22,8 +22,7 @@ let posts = [
     }
 ];
 
-class Home extends Component{
-    render(){
+function Home(props){
         return(
             <div>
                 {
@@ -35,6 +34,5 @@ class Home extends Component{
                 
             </div>
         );
-    }
 }
 export default Home;
