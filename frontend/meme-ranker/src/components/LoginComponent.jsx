@@ -28,6 +28,8 @@ function Login(props){
         <div className="row">
           <div className="col text-center">
             <div><a id="sign-link" href="#">Need an account?</a></div>
+            <div><a id="sign-link" href="#">Forgot password?</a></div>
+
           </div>
         </div>
       </div>

@@ -80,3 +80,59 @@ font-family: 'Montserrat';
   .fa-arrow{
       margin-right: 0.5rem;
   }
+  .card-text{
+      font-family: "Montserrat";
+      font-size: 14px;
+  }
+  .profile-image {
+    display: inline;
+    vertical-align: middle;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-top: 1rem;
+
+  }
+  /* Profile */
+  .bio-heading{
+      text-align: center;
+  }
+  .votes-box{
+      text-align: center;
+  }
+  .username-text{
+      margin-top: 1rem;
+
+  }
+  .votes-box li{
+      list-style: none;
+      display: inline;
+      margin-right: 2rem;
+  }
+  .votes-box p{
+    font-family: 'Montserrat';
+    font-size: 14px;
+    text-align: justify;
+}
+  .fa-arrow-profile{
+      margin: 0;
+      margin-right: 1rem;
+  }
+  .follow-btn{
+      font-family: 'Montserrat';
+      font-weight: bold;
+      margin-top: 1rem;
+  }
+  .profile-item{
+      height: 300px;
+      width: 300px;
+      background-color: red;
+      margin: 2rem;
+
+  }
+  .profile-item-img{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+  }
