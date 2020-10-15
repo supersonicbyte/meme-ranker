@@ -2,12 +2,15 @@ import React from 'react';
 import ProfileItem from './ProfileItemComponent';
 
 let imgs = [
-    ['https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
     'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
-    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg'],
-    ['https://cdn.pixabay.com/photo/2017/07/25/01/22/cat-2536662__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
     'https://cdn.pixabay.com/photo/2017/07/25/01/22/cat-2536662__340.jpg',
-    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg']
+    'https://cdn.pixabay.com/photo/2017/07/25/01/22/cat-2536662__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg',
+    'https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492__340.jpg'
 ];
 
 
@@ -36,15 +39,13 @@ function Profile(props) {
                 </div>
             </div>
             <hr></hr>
+            <div className="image-grid">
             {
                 imgs.map((url, index) => {
-                    return (<div className="row">
-                        <ProfileItem img={imgs[index][0]}></ProfileItem>
-                        <ProfileItem img={imgs[index][1]}></ProfileItem>
-                        <ProfileItem img={imgs[index][2]}></ProfileItem>
-                    </div>);
+                    return (<ProfileItem img={imgs[index]}></ProfileItem>);
                 })
             }
+            </div>
             </div>
     );
 }
