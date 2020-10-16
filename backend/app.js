@@ -9,7 +9,6 @@ app.use(express.json());
 
 // users route
 app.use('/api/users', usersRoutes);
-app.use('/api/users', usersRoutes);
 
 // for unsupported routes
 app.use((req, res, next) => {
