@@ -39,7 +39,7 @@ function Signup(props) {
             </div>
             <div className="row">
                 <div className="col text-center">
-                    <div><a id="sign-link" href="#">Already have an account? Log in</a></div>
+                    <div><a id="sign-link" href="/login">Already have an account? Log in</a></div>
                 </div>
             </div>
         </div>
