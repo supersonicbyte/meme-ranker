@@ -10,10 +10,13 @@ app.use(express.json());
 // users route
 app.use('/api/users', usersRoutes);
 
+// making uploads public 
+app.use(express.static(__dirname + '/uploads'));
+
 // for unsupported routes
 app.use((req, res, next) => {
     const error = new HttpError('Could not find the route.', 404);
-    throw error;
+    res.send(error);
 });
 
 

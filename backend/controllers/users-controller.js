@@ -2,11 +2,12 @@ const db = require('../services/db');
 const bcrypt = require('bcrypt');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const upload = require('../services/file-upload');
 
 // number of rounds for hashing
 const saltRounds = 10;
 // queries
-const insertUserQuery = "INSERT INTO users (username, email, password, bio) VALUES ($1,$2,$3,$4) RETURNING *";
+const insertUserQuery = "INSERT INTO users (username, email, password, profile_img_path, bio) VALUES ($1,$2,$3,$4,$5) RETURNING *";
 const getUserByIdQuery = "SELECT username, email, bio, profile_img_path FROM users WHERE user_id=$1";
 const getUserByUsername = "SELECT * FROM users WHERE username=$1";
 const getUserByEmailQuery = "SELECT * FROM user WHERE email=1$";
@@ -29,8 +30,7 @@ async function getUserById(req, res, next) {
 }
 
 async function createUser(req, res, next) {
-    const { username, password, email, bio } = req.body;
-    console.log(password.lenghts);
+    const { username, email, password, bio } = req.body;
     // if (!validatePassword(password)) {
     //     console.log(password);
     //     const error = new HttpError('invalid password', 500);
@@ -40,16 +40,21 @@ async function createUser(req, res, next) {
     //     const error = new HttpError('email already exists', 500);
     //     next(error);s
     // }
+    
     try {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
-        const newUser = await db.query(insertUserQuery, [username, email, hash, bio]);
+        const newUser = await db.query(insertUserQuery,
+            [username,
+                email,
+                hash,
+                req.file ? "localhost:4000/" + res.req.file.filename : "",
+                bio],);
     }
     catch (error) {
         console.log(error);
     }
-    res.status(200);
-    res.send();
+    res.status(200).send();
 }
 
 async function updateUserBio(req, res, next) {
@@ -77,6 +82,8 @@ async function deleteUser(req, res, next) {
     }
     res.status(200).send();
 }
+
+
 
 // validation functions
 
