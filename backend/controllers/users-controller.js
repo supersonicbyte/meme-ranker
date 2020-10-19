@@ -8,19 +8,20 @@ const upload = require('../services/file-upload');
 const saltRounds = 10;
 // queries
 const insertUserQuery = "INSERT INTO users (username, email, password, profile_img_path, bio) VALUES ($1,$2,$3,$4,$5) RETURNING *";
-const getUserByIdQuery = "SELECT username, email, bio, profile_img_path FROM users WHERE user_id=$1";
+const getUserByIdQuery = "SELECT username, bio, profile_img_path FROM users WHERE user_id=$1";
 const getUserByUsername = "SELECT * FROM users WHERE username=$1";
 const getUserByEmailQuery = "SELECT * FROM user WHERE email=1$";
 const updateUserBioQuery = "UPDATE users SET bio=$1 WHERE user_id=$2";
 const updateUserPhotoQuery = "UPDATE users SET profile_img_path=$1 WHERE user_id=$2";
 const deleteUserQuery = "DELETE FROM users WHERE user_id=$1";
 
+
 // CRUD 
 async function getUserById(req, res, next) {
     try {
         const uid = req.params.uid;
         const queryResult = await db.query(getUserByIdQuery, [uid]);
-        const user = new User(queryResult.rows[0], queryResult.rows[1]);
+        const user = new User(queryResult.rows[0].username, "", "", queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
         res.json(user);
     }
     catch (error) {
@@ -31,16 +32,15 @@ async function getUserById(req, res, next) {
 
 async function createUser(req, res, next) {
     const { username, email, password, bio } = req.body;
-    // if (!validatePassword(password)) {
-    //     console.log(password);
-    //     const error = new HttpError('invalid password', 500);
-    //     next(error);
-    // }
-    // else if (!validateEmail(email)) {
-    //     const error = new HttpError('email already exists', 500);
-    //     next(error);s
-    // }
-    
+    if (!validatePassword(password)) {
+        console.log(password);
+        const error = new HttpError('invalid password', 500);
+        next(error);
+    }
+    else if (!validateEmail(email)) {
+        const error = new HttpError('email already exists', 500);
+        next(error); s
+    }
     try {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
@@ -48,8 +48,8 @@ async function createUser(req, res, next) {
             [username,
                 email,
                 hash,
-                req.file ? "localhost:4000/" + res.req.file.filename : "",
-                bio],);
+                req.file ? req.hostname + ':4000' + '/' + res.req.file.filename : "",
+                bio]);
     }
     catch (error) {
         console.log(error);
@@ -88,10 +88,7 @@ async function deleteUser(req, res, next) {
 // validation functions
 
 function validatePassword(pass) {
-    if (pass.lenght >= 6) {
-        return true;
-    }
-    return false;
+    return true;
 }
 
 async function validateEmail(email) {
@@ -104,7 +101,7 @@ async function validateEmail(email) {
         if (result.rowCount > 0) return false;
     }
     catch (err) {
-        next(err);
+        return false;
     }
     return true;
 }

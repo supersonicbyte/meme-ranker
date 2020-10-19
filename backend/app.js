@@ -15,6 +15,7 @@ app.use(express.static(__dirname + '/uploads'));
 
 // for unsupported routes
 app.use((req, res, next) => {
+    console.log(server.adress());
     const error = new HttpError('Could not find the route.', 404);
     res.send(error);
 });
