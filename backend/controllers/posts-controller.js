@@ -19,8 +19,4 @@ async function createPost(req, res, next){
 }
 
 
-
-
-// validation
-function validateDesc(desc){
-}
+exports.createPost = createPost;

@@ -3,17 +3,21 @@ const bcrypt = require('bcrypt');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const upload = require('../services/file-upload');
+const { body, validationResult } = require('express-validator');
+
 
 // number of rounds for hashing
 const saltRounds = 10;
-// queries
+// prepared query statements
 const insertUserQuery = "INSERT INTO users (username, email, password, profile_img_path, bio) VALUES ($1,$2,$3,$4,$5) RETURNING *";
 const getUserByIdQuery = "SELECT username, bio, profile_img_path FROM users WHERE user_id=$1";
 const getUserByUsername = "SELECT * FROM users WHERE username=$1";
-const getUserByEmailQuery = "SELECT * FROM user WHERE email=1$";
-const updateUserBioQuery = "UPDATE users SET bio=$1 WHERE user_id=$2";
+const getUserByEmailQuery = "SELECT * FROM users WHERE email=$1";
+const updateUserQuery = "UPDATE users SET password=$1, bio=$2 WHERE user_id=$3";
 const updateUserPhotoQuery = "UPDATE users SET profile_img_path=$1 WHERE user_id=$2";
 const deleteUserQuery = "DELETE FROM users WHERE user_id=$1";
+const findUserByIdQuery = "SELECT * FROM users WHERE user_id=$1";
+const getUsersByUsernameQuery = "SELECT user_id, username, bio, profile FROM users WHERE username LIKE '$1%";
 
 
 // CRUD 
@@ -21,8 +25,13 @@ async function getUserById(req, res, next) {
     try {
         const uid = req.params.uid;
         const queryResult = await db.query(getUserByIdQuery, [uid]);
-        const user = new User(queryResult.rows[0].username, "", "", queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
-        res.json(user);
+        if (queryResult.rowCount > 0) {
+            const user = new User(queryResult.rows[0].username, "", "", queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
+            res.json(user);
+        }
+        else {
+            res.json("Invalid user id.");
+        }
     }
     catch (error) {
         console.log(error);
@@ -31,16 +40,12 @@ async function getUserById(req, res, next) {
 }
 
 async function createUser(req, res, next) {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { username, email, password, bio } = req.body;
-    if (!validatePassword(password)) {
-        console.log(password);
-        const error = new HttpError('invalid password', 500);
-        next(error);
-    }
-    else if (!validateEmail(email)) {
-        const error = new HttpError('email already exists', 500);
-        next(error); s
-    }
     try {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
@@ -53,24 +58,26 @@ async function createUser(req, res, next) {
     }
     catch (error) {
         console.log(error);
+        res.status(400).send();
     }
     res.status(200).send();
 }
 
-async function updateUserBio(req, res, next) {
+async function updateUser(req, res, next) {
     const uid = req.params.uid;
-    const { bio } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { password, bio } = req.body;
     try {
-        if (typeof bio != undefined) {
-            await db.query(updateUserBioQuery, [bio, uid]);
-        }
-        res.status(200);
-        res.send();
+
+        await db.query(updateUserQuery, [password, bio, uid]);
     }
     catch (err) {
         next(err);
     }
-
+    res.status(200).send();
 }
 
 async function deleteUser(req, res, next) {
@@ -83,41 +90,81 @@ async function deleteUser(req, res, next) {
     res.status(200).send();
 }
 
+async function getUsersByUsername(req, res, next){
+    const searchQuery = body.searchQuery;
+    let users = [];
+    try {
+       const queryResult = await db.query(getUsersByUsernameQuery, [searchQuery]);
 
+        
+    } catch (error) {
+        console.log(error);
+        res.send(400);
+    }
 
-// validation functions
-
-function validatePassword(pass) {
-    return true;
 }
 
-async function validateEmail(email) {
-    const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!regex.test(email)) {
-        return false;
-    }
-    try {
-        const result = await db.query(getUserByEmailQuery, [email]);
-        if (result.rowCount > 0) return false;
-    }
-    catch (err) {
-        return false;
-    }
-    return true;
-}
 
-async function validateUsername(username) {
+
+// DB Validation functions
+
+
+async function findUserByUsername(username) {
+    let user;
     try {
-        const result = await db.query(getUserByUsername, [username]);
-        if (result.rowCount > 0) return false;
+        const queryResult = await db.query(getUserByUsername, [username]);
+        if (queryResult.rowCount > 0) {
+            user = new User(queryResult.rows[0].username, queryResult.rows[0].email, queryResult.rows[0].password, queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
+        }
+        else {
+            user = null;
+        }
     }
     catch (err) {
+        user = null;
         console.log(err);
     }
-    return true;
+    return user;
+}
+async function findUserByEmail(email) {
+    let user;
+    try {
+        const queryResult = await db.query(getUserByEmailQuery, [email]);
+        if (queryResult.rowCount > 0) {
+            user = new User(queryResult.rows[0].username, queryResult.rows[0].email, queryResult.rows[0].password, queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
+        }
+        else {
+            user = null;
+        }
+    }
+    catch (err) {
+        user = null;
+        console.log(err);
+    }
+    return user;
+}
+
+async function findUserById(id) {
+    let user;
+    try {
+        const queryResult = await db.query(findUserByIdQuery, [id]);
+        if (queryResult.rowCount > 0) {
+            user = new User(queryResult.rows[0].username, queryResult.rows[0].email, queryResult.rows[0].password, queryResult.rows[0].bio, queryResult.rows[0].profile_img_path);
+        }
+        else {
+            user = null;
+        }
+    }
+    catch (err) {
+        user = null;
+    }
+    return user;
 }
 
 exports.createUser = createUser;
 exports.getUserById = getUserById;
-exports.updateUserBio = updateUserBio;
+exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
+exports.findUserById = findUserById;
+exports.findUserByUsername = findUserByUsername;
+exports.findUserByEmail = findUserByEmail;
