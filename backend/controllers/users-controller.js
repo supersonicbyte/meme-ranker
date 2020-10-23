@@ -17,7 +17,9 @@ const updateUserQuery = "UPDATE users SET password=$1, bio=$2 WHERE user_id=$3";
 const updateUserPhotoQuery = "UPDATE users SET profile_img_path=$1 WHERE user_id=$2";
 const deleteUserQuery = "DELETE FROM users WHERE user_id=$1";
 const findUserByIdQuery = "SELECT * FROM users WHERE user_id=$1";
-const getUsersByUsernameQuery = "SELECT user_id, username, bio, profile FROM users WHERE username LIKE '$1%";
+const countUsernamePagesQuery = "SELECT user_id, username, bio, profile_img_path FROM users WHERE LOWER(username) LIKE $1 || '%'";
+const getUsernamePageQuery = "SELECT user_id, username, bio, profile_img_path FROM users WHERE LOWER(username) LIKE $1 || '%' LIMIT 10 OFFSET $2";
+
 
 
 // CRUD 
@@ -90,17 +92,31 @@ async function deleteUser(req, res, next) {
     res.status(200).send();
 }
 
-async function getUsersByUsername(req, res, next){
-    const searchQuery = body.searchQuery;
-    let users = [];
-    try {
-       const queryResult = await db.query(getUsersByUsernameQuery, [searchQuery]);
-
-        
-    } catch (error) {
-        console.log(error);
-        res.send(400);
+async function getUsersByUsername(req, res, next) {
+    const page = req.query.page;
+    const searchQuery = req.query.searchQuery.toLowerCase();
+    if (!searchQuery) {
+        const err = new HttpError('Search query cannot be null', 400);
+        return res.json(err);
     }
+    let offset;
+    if (page) offset = (page - 1) * 10;
+    else offset = 0;
+    let results = {};
+    try {
+        const pages = await db.query(countUsernamePagesQuery, [searchQuery]);
+        results.totalPages = Math.ceil(pages.rowCount / 10);
+        const queryResult = await db.query(getUsernamePageQuery, [searchQuery, offset]);
+        results.users = queryResult.rows.map(row => {
+            return { user_id: row.user_id, username: row.username, profileImgPath: row.profile_img_path };
+        });
+        results.page = page;
+    } catch (error) {
+        console.log("neeeece");
+        console.log(error);
+        res.sendStatus(400);
+    }
+    res.json(results);
 
 }
 
@@ -168,3 +184,4 @@ exports.deleteUser = deleteUser;
 exports.findUserById = findUserById;
 exports.findUserByUsername = findUserByUsername;
 exports.findUserByEmail = findUserByEmail;
+exports.getUsersByUsername = getUsersByUsername;

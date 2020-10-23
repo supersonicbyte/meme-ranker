@@ -4,7 +4,7 @@ const HttpError = require('./models/http-error');
 const usersRoutes = require('./routes/users-routes');
 const postsRoutes = require('./routes/posts-routes');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 // for JSON parsing
 app.use(express.json());
 

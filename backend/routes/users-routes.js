@@ -34,7 +34,7 @@ router.patch('/:uid',
 
 router.delete('/:uid', usersController.deleteUser);
 
-// routes.get('/searchQuery', );
+router.get('/',usersController.getUsersByUsername);
 
 
 module.exports = router;
