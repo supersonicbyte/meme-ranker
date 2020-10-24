@@ -98,7 +98,7 @@ async function getUsersByUsername(req, res, next) {
     if (!searchQuery) {
         const err = new HttpError('Search query cannot be null', 400);
         return res.json(err);
-    }
+    } n
     let offset;
     if (page) offset = (page - 1) * 10;
     else offset = 0;
@@ -118,6 +118,19 @@ async function getUsersByUsername(req, res, next) {
     }
     res.json(results);
 
+}
+
+async function login(req, res, next) {
+    const { username, password } = req.body;
+    const user = await findUserByUsername(username);
+    if (user) {
+        bcrypt.compare(password, user.password, (err, result) => {
+            if (result) return res.status(200).json('Succesfuly logged in');
+        });
+    }
+    else {
+        return res.status(401).json('Bad username or password');
+    }
 }
 
 
@@ -185,3 +198,4 @@ exports.findUserById = findUserById;
 exports.findUserByUsername = findUserByUsername;
 exports.findUserByEmail = findUserByEmail;
 exports.getUsersByUsername = getUsersByUsername;
+exports.login = login;
