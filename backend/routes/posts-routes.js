@@ -2,27 +2,37 @@ const express = require('express');
 const postsController = require('../controllers/posts-controller');
 const usersController = require('../controllers/users-controller');
 const { check } = require('express-validator');
+const upload = require('../services/file-upload');
+
 
 const router = express.Router();
 
-router.get('/:pid', usersController.getUserById);
+router.get('/:pid', postsController.getPostById);
 
 router.post('/create', 
+upload.single('image'),
 [
     check('description').isLength({ max: 255 }),
-    check('timestamp').not().isEmpty().isDate(),
+    check('timestamp').trim().isISO8601(),
     check("user_id").isInt().custom(value => {
-        return usersController.findUserById().then(user => {
-            if(user) return Promise.reject('Invalid user id.');
+        return usersController.findUserById(value).then(user => {
+            if(!user) return Promise.reject('Invalid user id.');
         })
     })
     
 ], 
 postsController.createPost);
 
-router.patch('/pid', usersController.updateUser);
+router.patch('/:pid', 
+upload.single('image'),
+[
+    check('description').isLength({ max: 255 }),
 
-router.delete('/:pid', usersController.deleteUser);
+],
+postsController.updatePost
+);
+
+router.delete('/:pid', postsController.deletePost);
 
 
 module.exports = router;
